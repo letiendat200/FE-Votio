@@ -3,8 +3,8 @@ import { useNavigate  } from 'react-router-dom';
 export default function SignupPage() {
     const navigate = useNavigate();
     return (
-        <section className="bg-gradient-to-b from-purple-300 to-purple-800">
-            <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
+        <section className="bg-gradient-to-b from-purple-300 to-purple-800 h-screen">
+            <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-full lg:py-0">
                 <a className="flex items-center mb-6 text-2xl font-semibold text-indigo-950">
                     <img className="w-8 h-8 mr-2" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Logo_vote.svg/1200px-Logo_vote.svg.png" alt="logo"/>
                     VOTIO    
