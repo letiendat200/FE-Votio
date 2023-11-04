@@ -1,10 +1,12 @@
-import React from 'react'
+import React,{useState} from 'react'
 import { useNavigate  } from 'react-router-dom';
 export default function SignupPage() {
+    const [password,setPassword] = useState("");
+    const [passwordAgain,setPasswordAgain] = useState("");
     const navigate = useNavigate();
     return (
-        <section className="bg-gradient-to-b from-purple-300 to-purple-800 h-screen">
-            <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-full lg:py-0">
+        <section className="bg-gradient-to-b from-purple-300 to-purple-800">
+            <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
                 <a className="flex items-center mb-6 text-2xl font-semibold text-indigo-950">
                     <img className="w-8 h-8 mr-2" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Logo_vote.svg/1200px-Logo_vote.svg.png" alt="logo"/>
                     VOTIO    
@@ -24,9 +26,14 @@ export default function SignupPage() {
                                 <input type="email" name="email" id="email" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="name@company.com" required=""/>
                             </div>
                             <div>
-                                <label for="password" className="block mb-2 text-sm font-medium text-purple-600">Password</label>
-                                <input type="password" name="password" id="password" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="••••••••" required=""/>
-                            </div>                                 
+                                <label for="password" className="block mb-2 text-sm font-medium text-purple-600">Password <span className="text-slate-400">(*5 or more characters)</span></label> 
+                                <input type="password" name="password" id="password" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" onChange={e => setPassword(e.target.value)}  placeholder="••••••••" required=""/>
+                            </div>  
+                            <div>
+                                <label for="passwordAgain" className="block mb-2 text-sm font-medium text-purple-600">Enter password again</label>
+                                <input type="password" name="passwordAgain" id="passwordAgain" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" onChange={e => setPasswordAgain(e.target.value)} placeholder="••••••••" required=""/>
+                            </div>
+                            
                             <div className="flex items-center justify-between">
                                 <div className="flex items-start">
                                     <div className="flex items-center h-5">
@@ -40,7 +47,9 @@ export default function SignupPage() {
                                 </div>
                                 
                             </div>                      
-                            <button type="submit" className="w-full text-white bg-purple-600 hover:bg-purple-700 focus:ring-4 focus:outline-none focus:ring-white-300 font-base rounded-lg px-5 py-2.5 text-center">Create Account</button>
+                            <button type="submit" 
+                                    className="w-full px-5 py-2.5 font-base text-center text-white cursor-pointer bg-purple-600 hover:bg-purple-700 focus:ring-4 rounded-lg disabled:bg-slate-500 disabled:opacity-25 disabled:cursor-default"
+                                    disabled={!password || password.length < 5 || password!=passwordAgain}>Create Account</button>
                             
                             <p className="text-center text-sm font-light text-gray-500">
                                 Already have an account? <button onClick={()=>{navigate('/')}} className="font-medium ml-5 text-purple-600 hover:underline ">Log in now</button>
