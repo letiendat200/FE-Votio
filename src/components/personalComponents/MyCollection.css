@@ -1,0 +1,21 @@
+.survey-box-div {
+    display: inline-block;
+    background-color: #faf397; 
+    border-radius: 8px;
+    transition: transform 0.3s ease-in-out; 
+}
+
+.survey-box-div:hover {
+    transform: translateY(-5px); 
+}
+
+.arrow {    
+    right: 10px;   
+    opacity: 0; /* Initially hide the arrow */
+    transition: opacity 0.3s ease-in-out; /* Add a smooth transition effect */
+}
+
+.survey-section:hover .arrow {
+    opacity: 1;
+  }
+  

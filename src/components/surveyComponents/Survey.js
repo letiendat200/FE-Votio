@@ -1,127 +1,123 @@
-import React, {useState } from 'react';
-import axios from "axios";
+import React, { useState} from 'react';
+import {useNavigate, useParams} from 'react-router-dom'
 
-export default function Survey() {
+const SurveyQuestion = ({ questions }) => {
+    const { id } = useParams();
 
-  const [title,setTitle] = useState(null);
-  const [questions, setQuestions] = useState([{ question: '', answers: [''] }]);
-  const [postResult, setPostResult] = useState(null);
-  const [showResult, setShowResult] = useState(false);
-
-  const handleTitleChange = (value) => {
-    setTitle(value);
-  }
-
-  const handleQuestionChange = (index, value) => {
-    const newQuestions = [...questions];
-    newQuestions[index].question = value;
-
-    setQuestions(newQuestions);
-  };
-
-  const handleAnswerChange = (questionIndex, answerIndex, value) => {
-    const newQuestions = [...questions];
-    newQuestions[questionIndex].answers[answerIndex] = value;
-    
-    if (answerIndex === newQuestions[questionIndex].answers.length - 1) {      
-      newQuestions[questionIndex].answers.push('');
-    }
-
-    setQuestions(newQuestions);
-  };  
-
-  const addQuestion = () => {
-    setQuestions([...questions, { question: '', answers: [''] }]);
-  };
-
-  const deleteQuestion = (questionIndex) => {
-    const currentQuestions = [...questions];
-    currentQuestions.splice(questionIndex, 1);
-    setQuestions(currentQuestions);
-  };
+    const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+    const [selectedChoices, setSelectedChoices] = useState({});
   
-  const sendQuestions = async () => {
-          if(title==null){
-            alert("Please fill out the title");
-          }
-          else{
-            if(questions=='' || questions[0].question == ''){
-              alert("Please create at least 1 quention");
-            }
-            else{
-              alert("Survey created!!");
-              //       try {
-              //         const response = await axios.post('https://jsonplaceholder.typicode.com/posts', {
-              //         title: title,
-              //         body: questions,
-              //         userId: 10, 
-              //       });    
-              //         setPostResult(response.data);          
-              //       } catch (error) {
-              //         console.error('Error posting data:', error);
-              //       }
-            }
-          }
-          
-          
-  };  
+    const handleNext = () => {
+      if (currentQuestionIndex < questions.length - 1) {
+        setCurrentQuestionIndex(currentQuestionIndex + 1);       
+      }
+    };
+  
+    const handlePrev = () => {
+      if (currentQuestionIndex > 0) {
+        setCurrentQuestionIndex(currentQuestionIndex - 1);
+      }
+    };
 
-  return (
-    <div className = "flex flex-col m-5">
-      <div className = "p-5 bg-gray-100 border border-zinc-300">        
-        <input 
-          type="text"           
-          value={title}
-          onChange={(e) => handleTitleChange(e.target.value)} 
-          placeholder="Survey title"
-          className="w-full p-2 pl-4 border border-gray-300 text-lg rounded-sm block outline-none placeholder-blue-800/60"/>
-      </div>      
-      <div>      
-        {questions.map((q, questionIndex) => (
-            <div key={questionIndex}>
-                <div className = "flex flex-col m-2 my-5 p-2 bg-gray-300">
-                  <div className = "pr-2 self-end">
-                    <button className="cursor-pointer" onClick = {()=>deleteQuestion(questionIndex)} > X </button>
-                  </div>
-                  <div className = "p-3 pr-10">
-                    <input
-                      type="text"
-                      value={q.question}
-                      onChange={(e) => handleQuestionChange(questionIndex, e.target.value)}
-                      placeholder={`Question ${questionIndex + 1}`}
-                      className="w-full p-2 border border-gray-300 outline-none placeholder-blue-800/60"/>
-                    <div className = "mt-3 ml-10">                    
-                      {q.answers.map((answer, answerIndex) => (
-                        <input
-                          key={answerIndex}
-                          type="text"
-                          value={answer}
-                          onChange={(e) => handleAnswerChange(questionIndex, answerIndex, e.target.value)}
-                          placeholder={`Answer ${answerIndex + 1}`}
-                          className="w-full mt-2 p-2 border border-gray-300 outline-none placeholder-blue-800/60"                        
-                        />
-                      ))}                    
-                    </div>                  
-                  </div>
-                  
-                </div>             
+    const handleChoiceClick = (index) => {
+      // Create a copy of the selected choices object
+      const newSelectedChoices = { ...selectedChoices };
+  
+      // Toggle the selection status of the clicked choice
+      newSelectedChoices[currentQuestionIndex] =
+        newSelectedChoices[currentQuestionIndex] || [];
+      const isChoiceSelected = newSelectedChoices[currentQuestionIndex].includes(
+        index
+      );
+  
+      if (questions[currentQuestionIndex].type === '1') {
+        // For type 1, only allow one choice to be selected
+        newSelectedChoices[currentQuestionIndex] = [index];
+      } else {
+        // For type 2, allow multiple choices to be selected
+        if (isChoiceSelected) {
+          // If already selected, remove it
+          newSelectedChoices[currentQuestionIndex] = newSelectedChoices[
+            currentQuestionIndex
+          ].filter((i) => i !== index);
+        } else {
+          // If not selected, add it
+          newSelectedChoices[currentQuestionIndex].push(index);
+        }
+      }
+  
+      // Update the state with the new selected choices
+      setSelectedChoices(newSelectedChoices);
+    };
+  
+    const isLastQuestion = currentQuestionIndex === questions.length - 1;
+    const isFirstQuestion = currentQuestionIndex === 0;
+  
+    return (
+      <div className = "max-h-full min-h-screen py-16 flex flex-col bg-gradient-to-b from-purple-300 to-red-300 ">
+          <div className = "flex flex-col max-w-screen-xl w-10/12 mx-auto pt-12 pb-12 px-16 bg-white rounded-lg">
+            <div className = "self-center text-2xl my-6 font-medium"> 
+                {questions[currentQuestionIndex].content} 
             </div>
-          ))
-          }          
+            <div className="grid grid-cols-2 gap-4 mt-6">                
+                {questions[currentQuestionIndex].choices.map((choice, index) => (
+                    <div 
+                        key={index}                        
+                        onClick={() => handleChoiceClick(index)}
+                        className={`${
+                          selectedChoices[currentQuestionIndex]?.includes(index) ? 'border-green-500 shadow-lg' : ''
+                        } border-2 py-2 px-4 border-2 rounded text-lg cursor-pointer hover:shadow-lg`}                      
+                    >
+                        {choice.content}
+                    </div>
+                ))}
+            </div>
+            <div className="grid grid-cols-2 mt-10">
+                {isFirstQuestion ? null : (
+                    <button
+                        onClick={handlePrev}
+                        className="col-start-1 justify-self-start bg-black text-white text-xl font-bold py-4 px-10 rounded mr-2"
+                    >
+                        Prev
+                    </button>
+                )}
+                    <button
+                        onClick={handleNext}
+                        className="col-start-2 justify-self-end bg-black text-white text-xl font-bold py-4 px-10 rounded "
+                    >
+                        {isLastQuestion ? 'Finish' : 'Next'}
+                    </button>
+            </div>
+          </div>         
       </div>
-      <div className="flex justify-center mx-2 mt-2 mb-5">
-        <button onClick={addQuestion} className=" p-5 w-full bg-gradient-to-r from-orange-500 to-pink-600 text-white text-2xl font-medium tracking-wide rounded-md">
-            +  ADD QUESTION
-        </button>        
-      </div>
-      <div className="flex justify-end">
-        <button onClick={sendQuestions} className=" p-3 w-48 bg-gradient-to-r from-sky-400 to-blue-600 text-white text-lg tracking-wide rounded-md">
-            Save Survey
-        </button>        
-      </div>     
-    </div>        
-  );
-}
+    );
+};
 
+const Survey = () => {
+  const questions = [
+    {
+      content: 'Question 1',
+      type: '1',
+      choices: [
+        { content: 'A' },
+        { content: 'B' },
+        { content: 'C' },
+        { content: 'D' },
+      ],
+    },
+    {
+      content: 'Question 2',
+      type: '2',
+      choices: [
+        { content: 'Red' },
+        { content: 'Green' },
+        { content: 'Blue' },
+        { content: 'Yellow' },
+      ],
+    },
+  ];
 
+  return <SurveyQuestion questions={questions} />;
+};
 
+export default Survey;

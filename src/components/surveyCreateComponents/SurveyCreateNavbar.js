@@ -1,7 +1,7 @@
 import React from 'react';
 
-export default function  NavbarComponent(props) {
-  const activeContent = props.activeContent;
+export default function  SurveyCreateNavbarComponent(props) {
+  //const activeContent = props.activeContent;
   const setActiveContent = props.setActiveContent;
   return (    
     <nav className="w-full bg-slate-300 border-gray-200">      
