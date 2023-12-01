@@ -65,6 +65,12 @@ export default function SurveyCreateQuestions() {
     setQuestions(currentQuestions);
   };
 
+  const deleteChoice = (questionIndex,choiceIndex) => {
+    const currentQuestions = [...questions];
+    currentQuestions[questionIndex].choices.splice(choiceIndex, 1);
+    setQuestions(currentQuestions);
+  };
+
   //Checking the criteria of the survey (Must update further if needed)
   const isSurveyValid = () => {
     //Check if there is a title
@@ -100,13 +106,11 @@ export default function SurveyCreateQuestions() {
           } catch (error) {
             console.error('Error posting data:', error);
           }
-      alert("Survey created!!");      
+      alert("Survey created!!");  
+      console.log(postResponse);    
     }  
   }; 
 
-  const showPostResult = () =>{
-    console.log(postResponse);    
-  }
 
   return (
     <div className = "flex flex-col m-5">
@@ -134,14 +138,16 @@ export default function SurveyCreateQuestions() {
                       className="w-full p-2 border border-gray-300 outline-none placeholder-blue-800/60"/>
                     <div className = "mt-3 ml-10">                    
                       {q.choices.map((choice, choiceIndex) => (
-                        <input
-                          key={choiceIndex}
-                          type="text"
-                          value={choice.content}
-                          onChange={(e) => handleChoiceChange(questionIndex, choiceIndex, e.target.value)}
-                          placeholder={`Choice ${choiceIndex + 1}`}
-                          className="w-full mt-2 p-2 border border-gray-300 outline-none placeholder-blue-800/60"                        
-                        />
+                        <div key={choiceIndex} className= "flex">
+                          <input                            
+                            type="text"
+                            value={choice.content}
+                            onChange={(e) => handleChoiceChange(questionIndex, choiceIndex, e.target.value)}
+                            placeholder={`Choice ${choiceIndex + 1}`}
+                            className="w-full mt-2 p-2 border border-gray-300 outline-none placeholder-blue-800/60"                        
+                          />
+                          <div className="relative self-center left-4 cursor-pointer" onClick = {()=>deleteChoice(questionIndex,choiceIndex)}>X</div>
+                        </div>
                       ))}                    
                     </div>                  
                   </div>
@@ -162,11 +168,11 @@ export default function SurveyCreateQuestions() {
         </button>
         <button onClick={sendQuestions} className=" px-10 py-2 w-fit h-fit bg-gradient-to-r from-sky-400 to-blue-600 text-white text-lg tracking-wide rounded-md">
             Save Survey
-        </button>
-        <button onClick={showPostResult} className=" px-10 py-2 w-fit h-fit bg-gradient-to-r from-sky-400 to-red-600 text-white text-lg tracking-wide rounded-md">
-            Show Survey
-        </button>
+        </button>        
       </div>      
+      {postResponse !=''&& (
+        <div>THis is what you want</div>
+      )}
     </div>        
   );
 }

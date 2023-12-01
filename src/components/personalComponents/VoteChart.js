@@ -6,6 +6,7 @@ const VoteChart = ({ choices, id }) => {
   const chartID = id;
   const labels = choices.map((choice) => choice.content);
   const data = choices.map((choice) => choice.number);  
+  
   const adjustedLabels = labels.map((label)=>{
     if (label.length <= 30) {
       return [label];
@@ -28,6 +29,7 @@ const VoteChart = ({ choices, id }) => {
     }  
     return result;
   });
+
   const chartData = {
     labels: adjustedLabels,
     datasets: [

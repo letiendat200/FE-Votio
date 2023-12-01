@@ -1,17 +1,41 @@
 import React, { useState} from 'react';
 import {useNavigate, useParams} from 'react-router-dom'
 
-const SurveyQuestion = ({ questions }) => {
+const SurveyQuestion = ({ questions, choicesResponse, setChoicesResponse }) => {
     const { id } = useParams();
 
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [selectedChoices, setSelectedChoices] = useState({});
+    
   
     const handleNext = () => {
       if (currentQuestionIndex < questions.length - 1) {
-        setCurrentQuestionIndex(currentQuestionIndex + 1);       
-      }
-    };
+        setCurrentQuestionIndex(currentQuestionIndex + 1);
+      } else {
+          // Update choicesResponse with the selected choices for each question
+          const updatedChoicesResponse = questions.map((question, index) => {
+            const selectedChoiceIndices = selectedChoices[index];
+    
+            if (selectedChoiceIndices && selectedChoiceIndices.length > 0) {
+              const selectedChoicesContent = selectedChoiceIndices.map(
+                (choiceIndex) => question.choices[choiceIndex].content
+              );
+    
+              return {
+                content: question.content,
+                type: question.type,
+                choices: selectedChoicesContent.map((content) => ({ content })),
+              };
+            }
+    
+            return null; // Handle cases where no choice is selected
+          });
+    
+          setChoicesResponse(updatedChoicesResponse.filter((response) => response !== null));
+    
+          console.log(updatedChoicesResponse);
+        }
+      };
   
     const handlePrev = () => {
       if (currentQuestionIndex > 0) {
@@ -94,9 +118,10 @@ const SurveyQuestion = ({ questions }) => {
 };
 
 const Survey = () => {
+  const [choicesResponse, setChoicesResponse] = useState([]);  
   const questions = [
     {
-      content: 'Question 1',
+      content: 'Chữ cái đầu tiên',
       type: '1',
       choices: [
         { content: 'A' },
@@ -106,7 +131,7 @@ const Survey = () => {
       ],
     },
     {
-      content: 'Question 2',
+      content: 'Màu nào xấu',
       type: '2',
       choices: [
         { content: 'Red' },
@@ -117,7 +142,11 @@ const Survey = () => {
     },
   ];
 
-  return <SurveyQuestion questions={questions} />;
+  return  <SurveyQuestion
+            questions={questions}
+            choicesResponse={choicesResponse}
+            setChoicesResponse={setChoicesResponse}
+          />
 };
 
 export default Survey;
