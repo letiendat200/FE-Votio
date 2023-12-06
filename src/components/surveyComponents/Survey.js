@@ -1,39 +1,49 @@
-import React, { useState} from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {useNavigate, useParams} from 'react-router-dom'
 
 const SurveyQuestion = ({ questions, choicesResponse, setChoicesResponse }) => {
     const { id } = useParams();
 
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-    const [selectedChoices, setSelectedChoices] = useState({});
+    const [selectedChoices, setSelectedChoices] = useState({});    
+    const isInitialMount = useRef(true);
+
+    useEffect(() => {
+      if (isInitialMount.current) {
+        
+        isInitialMount.current = false;
+      } else {
+        console.log(choicesResponse);       
+      }
+    }, [choicesResponse]);
     
-  
     const handleNext = () => {
       if (currentQuestionIndex < questions.length - 1) {
         setCurrentQuestionIndex(currentQuestionIndex + 1);
       } else {
-          // Update choicesResponse with the selected choices for each question
           const updatedChoicesResponse = questions.map((question, index) => {
             const selectedChoiceIndices = selectedChoices[index];
     
             if (selectedChoiceIndices && selectedChoiceIndices.length > 0) {
               const selectedChoicesContent = selectedChoiceIndices.map(
-                (choiceIndex) => question.choices[choiceIndex].content
+                (choiceIndex) => question.choices[choiceIndex].choiceID
               );
     
               return {
-                content: question.content,
-                type: question.type,
-                choices: selectedChoicesContent.map((content) => ({ content })),
+                questionID: question.questionID,
+                choices: selectedChoicesContent.map((choiceID) => ({ choiceID })),
               };
             }
     
-            return null; // Handle cases where no choice is selected
+            return null; 
           });
     
-          setChoicesResponse(updatedChoicesResponse.filter((response) => response !== null));
-    
-          console.log(updatedChoicesResponse);
+          updatedChoicesResponse.filter((response) => response !== null);
+          const finalResponse = {
+            answers: updatedChoicesResponse,
+          }
+          setChoicesResponse(finalResponse);
+          
         }
       };
   
@@ -44,37 +54,25 @@ const SurveyQuestion = ({ questions, choicesResponse, setChoicesResponse }) => {
     };
 
     const handleChoiceClick = (index) => {
-      // Create a copy of the selected choices object
       const newSelectedChoices = { ...selectedChoices };
   
-      // Toggle the selection status of the clicked choice
-      newSelectedChoices[currentQuestionIndex] =
-        newSelectedChoices[currentQuestionIndex] || [];
-      const isChoiceSelected = newSelectedChoices[currentQuestionIndex].includes(
-        index
-      );
+      newSelectedChoices[currentQuestionIndex] = newSelectedChoices[currentQuestionIndex] || [];
+      
+      const isChoiceSelected = newSelectedChoices[currentQuestionIndex].includes(index);
   
-      if (questions[currentQuestionIndex].type === '1') {
-        // For type 1, only allow one choice to be selected
+      if (questions[currentQuestionIndex].kindQuestion === 1) {       
         newSelectedChoices[currentQuestionIndex] = [index];
-      } else {
-        // For type 2, allow multiple choices to be selected
+      } else {        
         if (isChoiceSelected) {
-          // If already selected, remove it
-          newSelectedChoices[currentQuestionIndex] = newSelectedChoices[
-            currentQuestionIndex
-          ].filter((i) => i !== index);
-        } else {
-          // If not selected, add it
+          newSelectedChoices[currentQuestionIndex] = newSelectedChoices[currentQuestionIndex].filter((i) => i !== index);
+        } else {          
           newSelectedChoices[currentQuestionIndex].push(index);
         }
       }
-  
-      // Update the state with the new selected choices
       setSelectedChoices(newSelectedChoices);
     };
   
-    const isLastQuestion = currentQuestionIndex === questions.length - 1;
+    const isLastQuestion = currentQuestionIndex === questions.length - 1;    
     const isFirstQuestion = currentQuestionIndex === 0;
   
     return (
@@ -119,34 +117,107 @@ const SurveyQuestion = ({ questions, choicesResponse, setChoicesResponse }) => {
 
 const Survey = () => {
   const [choicesResponse, setChoicesResponse] = useState([]);  
-  const questions = [
+  const elections = 
     {
-      content: 'Chữ cái đầu tiên',
-      type: '1',
-      choices: [
-        { content: 'A' },
-        { content: 'B' },
-        { content: 'C' },
-        { content: 'D' },
-      ],
-    },
-    {
-      content: 'Màu nào xấu',
-      type: '2',
-      choices: [
-        { content: 'Red' },
-        { content: 'Green' },
-        { content: 'Blue' },
-        { content: 'Yellow' },
-      ],
-    },
-  ];
+      electionID: 6,
+      electionTitle: "Testing thôi em",
+      questionQuantity: 3,
+      startTime: null,
+      endTime: null,
+      data: [
+          {
+            questionID: 6,
+            content: "First letter of the alphabet",
+            kindQuestion: 1,
+            numberOfAnswer: 4,
+            choices: [
+                {
+                    choiceID: 68,
+                    content: "A",
+                    numberOfVote: 3
+                },
+                {
+                    choiceID: 69,
+                    content: "B",
+                    numberOfVote: 3
+                },
+                {
+                    choiceID: 71,
+                    content: "C",
+                    numberOfVote: 0
+                },
+                {
+                    choiceID: 72,
+                    content: "D",
+                    numberOfVote: 0
+                }
+            ]
+          },
+          {
+            questionID: 7,
+            content: "RGB consist of what color",
+            kindQuestion: 2,
+            numberOfAnswer: 3,
+            choices: [
+                {
+                    choiceID: 73,
+                    content: "Red",
+                    numberOfVote: 3
+                },
+                {
+                    choiceID: 74,
+                    content: "Blue",
+                    numberOfVote: 3
+                },
+                {
+                    choiceID: 75,
+                    content: "Green",
+                    numberOfVote: 0
+                },               
+            ]
+          },         
+          {
+            questionID: 8,
+            content: "Which option",
+            kindQuestion: 2,
+            numberOfAnswer: 5,
+            choices: [
+                {
+                    choiceID: 78,
+                    content: "Option 1",
+                    numberOfVote: 3
+                },
+                {
+                    choiceID: 79,
+                    content: "Option 2",
+                    numberOfVote: 1
+                },
+                {
+                    choiceID: 80,
+                    content: "Option 3",
+                    numberOfVote: 0
+                },
+                {
+                    choiceID: 81,
+                    content: "Option 4",
+                    numberOfVote: 0
+                },
+                {
+                    choiceID: 82,
+                    content: "Option 5",
+                    numberOfVote: 4
+                }
+            ]
+          }
+      ]
+};
+
 
   return  <SurveyQuestion
-            questions={questions}
+            questions={elections.data}
             choicesResponse={choicesResponse}
             setChoicesResponse={setChoicesResponse}
-          />
+          />  
 };
 
 export default Survey;
