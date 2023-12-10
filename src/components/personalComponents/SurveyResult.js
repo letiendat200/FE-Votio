@@ -1,5 +1,6 @@
 import React from 'react';
 import VoteChart from './VoteChart';
+import './SurveyResult.css';
 
 const SurveyResult = () => {
     const questions = [
@@ -74,7 +75,7 @@ const SurveyResult = () => {
                 <div className = "relative m-2 left-1/3 font-bold text-xl">Kết quả thống kê: </div>
                 <div className = "self-center m-2 font-semibold text-lg">                  
                   {question.choices.map((choice,choiceIndex)=>(
-                    <div className="flex justify-between">
+                    <div key={choiceIndex} className="flex justify-between">
                       <div className = "relative -left-4">{choice.content} : </div>
                       <div className = "relative -right-4">{choice.number} phiếu</div>
                     </div>

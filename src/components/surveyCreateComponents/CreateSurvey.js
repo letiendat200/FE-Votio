@@ -1,6 +1,7 @@
 import React,{useState} from 'react'
 import SurveyCreate  from './SurveyCreateQuestions';
 import SurveyCreateNavbarComponent from './SurveyCreateNavbar';
+import './CreateSurvey.css';
 const CreateSurvey = () => {
     const [activeContent, setActiveContent] = useState('survey');    
     return (

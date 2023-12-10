@@ -1,0 +1,11 @@
+.signup-page{
+    overflow-y: scroll;
+    background: linear-gradient(180deg, rgba(65,99,121,1) 0%, rgba(18,50,79,1) 100%);
+}
+
+.signup-form{
+    color: #ffffff;    
+    background: #6F82C3;
+    font-size: 24px;
+    font-weight: 700;
+}

@@ -170,12 +170,9 @@ export default function SurveyCreateQuestions() {
             Save Survey
         </button>        
       </div>      
-      {postResponse !=''&& (
+      {postResponse !==''&& (
         <div>THis is what you want</div>
       )}
     </div>        
   );
 }
-
-
-

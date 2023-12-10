@@ -1,0 +1,11 @@
+.survey-page{
+    background: linear-gradient(180deg, #5e8ead 0%, #416379 30%, #2F4858 100%);
+}
+
+.survey-title{    
+    text-align: center;
+    width: fit-content;
+    background-color: #f8fcff;    
+    color:#18cffd;    
+    text-transform: uppercase;
+}

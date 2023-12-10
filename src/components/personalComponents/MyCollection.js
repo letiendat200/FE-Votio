@@ -17,13 +17,12 @@ const MyCollection = () =>{
     ];
         
     return (        
-        <div className="max-h-full min-h-screen bg-white">
-            <div>Navbar</div>
+        <div className="max-h-full min-h-screen bg-white">            
             <div className = "mx-20 my-20">
                 <div className = "mb-4 text-2xl font-bold text-black">SURVEY LIST</div>
                 <div className = "flex flex-col">
                 {surveys.map((survey,surveyIndex)=>(
-                    <div className = "grid grid-cols-6 gap-4">
+                    <div key={surveyIndex} className = "grid grid-cols-6 gap-4">
                         <div className = "col-span-1 border-r-2">
                             Circle
                         </div>
