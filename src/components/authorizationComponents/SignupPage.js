@@ -9,6 +9,7 @@ export default function SignupPage() {
     const [passwordAgain,setPasswordAgain] = useState("");    
 
     const postData = async () => {
+        console.log("here");
         await axios({
             method: 'post',
             url: 'https://votio.onrender.com/v1/api/auth/register',
@@ -25,10 +26,10 @@ export default function SignupPage() {
             },
         })
             .then(response => {
-                // handle response
+                console.log(response);
             })
             .catch(error => {
-                // handle error
+                console.log(error);
             });
     }
 
@@ -46,7 +47,7 @@ export default function SignupPage() {
                         <h1 className="text-xl text-center font-bold leading-tight tracking-loose md:text-2xl">
                             SIGN UP
                         </h1>
-                        <form className="space-y-4 md:space-y-6" action="#">
+                        <div className="space-y-4 md:space-y-6" >
                             <div>
                                 <label htmlFor="name" className="block mb-2 text-sm ">Your Name</label>
                                 <input 
@@ -120,7 +121,7 @@ export default function SignupPage() {
                             <p className="text-center text-base font-bold">
                                 Already have an account? <button onClick={()=>{navigate('/login')}} className="font-bold ml-5 text-indigo-800 hover:underline ">Log in now</button>
                             </p>
-                        </form>
+                        </div>
                     </div>
                 </div>
             </div>
