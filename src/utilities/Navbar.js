@@ -41,7 +41,7 @@ const Navbar = ({ isLoggedIn, onLogout }) => {
               <Link to="/mySurvey" onClick={closeDropdown} className="block p-2 text-center hover:text-white hover:bg-slate-700">
                 MY PROFILE
               </Link>
-              <button onClick={handleLogout} className="block p-2">
+              <button onClick={handleLogout} className="block p-2 text-center hover:text-white hover:bg-slate-700">
                 LOGOUT
               </button>
             </>

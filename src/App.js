@@ -20,8 +20,8 @@ function App() {
     setLoggedIn(!!token);
   }, []);
 
-  const handleLogin = () => {
-    setCookie('token', '123', 10);
+  const handleLogin = (token) => {    
+    setCookie('token', token, 2);
     setLoggedIn(true);
   };
 
@@ -30,14 +30,19 @@ function App() {
     setLoggedIn(false);
   };
 
-  const getCookie = (name) => {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(';').shift();
+  const getCookie = (cookieName) => {
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+    const cookie = cookies[i].trim();
+    if (cookie.startsWith(cookieName + '=')) {
+      return cookie.substring(cookieName.length + 1);
+    }
+  }
+  return null;
   };
 
-  const setCookie = (name, value, minutes) => {
-    const expires = new Date(Date.now() + minutes * 60 * 1000).toUTCString();
+  const setCookie = (name, value, hours) => {
+    const expires = new Date(Date.now() + hours* 60 * 60 * 1000).toUTCString();
     document.cookie = `${name}=${value}; expires=${expires}; path=/`;
   };
 
@@ -56,9 +61,9 @@ function App() {
           <Route path="/signup" element={<SignupPage />} />
           {isLoggedIn && (
             <>
-              <Route path="/create" element={<CreateSurvey />} />
-              <Route exact path="/mySurvey" element={<MyCollection />} />
-              <Route path="/mySurvey/:id" element={<SurveyResult />} />
+              <Route path="/create" element={<CreateSurvey getCookie = {getCookie}/>} />
+              <Route exact path="/mySurvey" element={<MyCollection getCookie = {getCookie}/>} />
+              <Route path="/mySurvey/:id" element={<SurveyResult getCookie = {getCookie}/>} />
             </>
           )}
           <Route path="*" element = {<ErrorPage />}/>

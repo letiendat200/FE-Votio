@@ -2,7 +2,7 @@ import React from 'react';
 import VoteChart from './VoteChart';
 import './SurveyResult.css';
 
-const SurveyResult = () => {
+const SurveyResult = ({accessToken}) => {
     const questions = [
       {
         content : "Tên nào đẹp nhất?",
