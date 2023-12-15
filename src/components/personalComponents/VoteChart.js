@@ -5,7 +5,7 @@ Chart.register(CategoryScale,LinearScale,BarElement, Tooltip );
 const VoteChart = ({ choices, id }) => {
   const chartID = id;
   const labels = choices.map((choice) => choice.content);
-  const data = choices.map((choice) => choice.number);  
+  const data = choices.map((choice) => choice.numberOfVote);  
   
   const adjustedLabels = labels.map((label)=>{
     if (label.length <= 30) {
@@ -49,7 +49,8 @@ const VoteChart = ({ choices, id }) => {
     indexAxis: 'y',
     layout: {
       padding: {
-          left: 20
+          left: 20,
+          right:220
       }
     },
     scales: {

@@ -82,7 +82,7 @@ export default function LoginPage({ isLoggedIn, onLogin }) {
                                         <label htmlFor="remember" className="text-gray-500 dark:text-gray-300">Remember me</label>
                                     </div>
                                 </div>
-                                <button onClick={() => { navigate('forgotPassword') }} className="text-sm font-medium text-blue-600 hover:underline dark:text-blue-500">Forgot password?</button>
+                                <button onClick={() => { navigate('../forgotPassword') }} className="text-sm font-medium text-blue-600 hover:underline dark:text-blue-500">Forgot password?</button>
                             </div>
                             <button                                 
                                 className="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-white-300 font-base rounded-lg px-5 py-2.5 text-center"

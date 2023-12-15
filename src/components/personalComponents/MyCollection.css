@@ -17,5 +17,33 @@
 
 .survey-section:hover .arrow {
     opacity: 1;
+}
+
+.tick-body {
+    margin: 0;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100px;
+    height: 100px;
+    border-radius: 5px;
+    background-color: green;
+}
+
+.circle {
+    width: 75px;
+    height: 75px;
+    background-color: white;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
-  
+
+  .tick {
+    width: 25px;
+    height: 25px;
+    background-color: green;
+    clip-path: polygon(0% 50%, 40% 100%, 100% 0%);
+  }

@@ -1,11 +1,17 @@
 import React, {useState } from 'react';
 import axios from "axios";
 import Modal from './QuestionTypeModal';
+import LoadingScreen from '../../utilities/LoadingScreen';
+
 export default function SurveyCreateQuestions({getCookie}) {
+  const accessToken = getCookie("token");
+
+  const [loading, setLoading] = useState(false);
   const [title,setTitle] = useState('');
   const [startTime, setStartTime] = useState(new Date().toISOString());
   const [endTime, setEndTime] = useState(new Date(new Date().getTime() + 1 * 24 * 60 * 60 * 1000).toISOString());
-  const accessToken = getCookie("token");
+  const [electionCode, setElectionCode] = useState(null);
+  
   
   const handleStartDateChange = (date) => {
     setStartTime(date.toISOString());
@@ -101,6 +107,7 @@ export default function SurveyCreateQuestions({getCookie}) {
   };
 
   const sendQuestions = async () => {
+    setLoading(true);
     if(isSurveyValid()){
       await axios({
         method: 'post',
@@ -119,95 +126,105 @@ export default function SurveyCreateQuestions({getCookie}) {
         },
     })
         .then(response => {
-          console.log(response); 
-          alert("Survey created!!");  
+          alert("Election created!!");  
+          setElectionCode(response.data.metadata.election.electionCode);
         })
         .catch(error => {
           alert(error);
         });
+        setLoading(false);
     }  
   }; 
 
 
   return (
-    <div className = "flex flex-col m-5">
-      <div className = "p-5 bg-gray-100 border border-zinc-300">        
-        <input 
-          type="text"           
-          value={title}
-          onChange={(e) => handleTitleChange(e.target.value)} 
-          placeholder="Survey title"
-          className="w-full p-2 pl-4 border border-gray-300 text-lg rounded-sm block outline-none placeholder-blue-800/60"/>
-      </div>
-      <div className = "flex flex-row justify-around">
-        <div className="flex flex-col bg-gray-100 border border-zinc-300">
-          <div>Starting time:</div>
-          <input
-            type="datetime-local"
-            value={startTime.slice(0, 16)}
-            onChange={(e) => handleStartDateChange(new Date(e.target.value))}
-            className="w-full h-[25px] p-2 border border-gray-300 text-lg rounded-sm block outline-none"
-          />
-        </div>
-        <div className="flex flex-col bg-gray-100 border border-zinc-300">
-          <div>Ending time:</div>
-          <input
-            type="datetime-local"
-            value={endTime.slice(0, 16)}
-            onChange={(e) => handleEndDateChange(new Date(e.target.value))}
-            className="w-full h-[25px] p-2 border border-gray-300 text-lg rounded-sm block outline-none"
-          />
-        </div>      
-      </div>      
-      <div>      
-        {questions.map((q, questionIndex) => (
-            <div key={questionIndex}>
-                <div className = "flex flex-col m-2 my-5 p-2 bg-gray-200">
-                  <div className = "pr-2 self-end">
-                    <button className="cursor-pointer" onClick = {()=>deleteQuestion(questionIndex)} > X </button>
+    <div className="flex flex-col m-5">
+      {loading && (
+        <LoadingScreen />
+      )}
+      {electionCode ? (
+        <div> Election created! Here is your code to participate in voting: <span className="font-bold">{electionCode}</span> </div>
+      ) : (
+        <div>
+          <div className="p-5 bg-gray-100 border border-zinc-300">
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => handleTitleChange(e.target.value)}
+              placeholder="Election title"
+              className="w-full p-2 pl-4 border border-gray-300 text-lg rounded-sm block outline-none placeholder-blue-800/60" />
+          </div>
+          <div className="flex flex-row my-4 justify-around">
+            <div className="flex flex-col bg-gray-100 border border-zinc-300">
+              <div>Starting time:</div>
+              <input
+                type="datetime-local"
+                value={startTime.slice(0, 16)}
+                onChange={(e) => handleStartDateChange(new Date(e.target.value))}
+                className="max-w-full h-[25px] p-2 border border-gray-300 text-lg rounded-sm block outline-none"
+              />
+            </div>
+            <div className="flex flex-col bg-gray-100 border border-zinc-300">
+              <div>Ending time:</div>
+              <input
+                type="datetime-local"
+                value={endTime.slice(0, 16)}
+                onChange={(e) => handleEndDateChange(new Date(e.target.value))}
+                className="max-w-full h-[25px] p-2 border border-gray-300 text-lg rounded-sm block outline-none"
+              />
+            </div>
+          </div>
+          <div>
+            {questions.map((q, questionIndex) => (
+              <div key={questionIndex}>
+                <div className="flex flex-col m-2 my-5 p-2 bg-gray-200">
+                  <div className="pr-2 self-end">
+                    <button className="cursor-pointer" onClick={() => deleteQuestion(questionIndex)} > X </button>
                   </div>
-                  <div className = "p-3 pr-10">
+                  <div className="p-3 pr-10">
                     <input
                       type="text"
                       value={q.content}
                       onChange={(e) => handleQuestionChange(questionIndex, e.target.value)}
                       placeholder={`Question ${questionIndex + 1}`}
-                      className="w-full p-2 border border-gray-300 outline-none placeholder-blue-800/60"/>
-                    <div className = "mt-3 ml-10">                    
+                      className="w-full p-2 border border-gray-300 outline-none placeholder-blue-800/60" />
+                    <div className="mt-3 ml-10">
                       {q.choices.map((choice, choiceIndex) => (
-                        <div key={choiceIndex} className= "flex">
-                          <input                            
+                        <div key={choiceIndex} className="flex">
+                          <input
                             type="text"
                             value={choice.content}
                             onChange={(e) => handleChoiceChange(questionIndex, choiceIndex, e.target.value)}
                             placeholder={`Choice ${choiceIndex + 1}`}
-                            className="w-full mt-2 p-2 border border-gray-300 outline-none placeholder-blue-800/60"                        
+                            className="w-full mt-2 p-2 border border-gray-300 outline-none placeholder-blue-800/60"
                           />
-                          <div className="relative self-center left-4 cursor-pointer" onClick = {()=>deleteChoice(questionIndex,choiceIndex)}>X</div>
+                          <div className="relative self-center left-4 cursor-pointer" onClick={() => deleteChoice(questionIndex, choiceIndex)}>X</div>
                         </div>
-                      ))}                    
-                    </div>                  
+                      ))}
+                    </div>
                   </div>
-                  
-                </div>             
-            </div>
-          ))
-          }          
-      </div>
-      <div className="flex justify-center mx-2 mt-2 mb-5">
-        <button onClick={openModal} className=" p-5 w-full bg-gradient-to-r from-orange-500 to-pink-600 text-white text-2xl font-medium tracking-wide rounded-md">
-            +  ADD QUESTION
-        </button>
-      </div>
-      <Modal isOpen={isModalOpen} onClose={closeModal} onAddQuestion={addQuestion} />
-      <div className="flex justify-between px-2">        
-        <button className=" px-5 py-2 w-fit h-fit bg-gray-100 border border-gray-300 text-blue-500 text-md tracking-wide hover:bg-cyan-50 hover:border-blue-400">
-            New Survey
-        </button>
-        <button onClick={sendQuestions} className=" px-10 py-2 w-fit h-fit bg-gradient-to-r from-sky-400 to-blue-600 text-white text-lg tracking-wide rounded-md">
-            Save Survey
-        </button>        
-      </div>
-    </div>        
+
+                </div>
+              </div>
+            ))
+            }
+          </div>
+          <div className="flex justify-center mx-2 mt-2 mb-5">
+            <button onClick={openModal} className=" p-5 w-full bg-gradient-to-r from-orange-500 to-pink-600 text-white text-2xl font-medium tracking-wide rounded-md">
+              +  ADD QUESTION
+            </button>
+          </div>
+          <Modal isOpen={isModalOpen} onClose={closeModal} onAddQuestion={addQuestion} />
+          <div className="flex justify-between px-2">
+            <button className=" px-5 py-2 w-fit h-fit bg-gray-100 border border-gray-300 text-blue-500 text-md tracking-wide hover:bg-cyan-50 hover:border-blue-400">
+              New Survey
+            </button>
+            <button onClick={sendQuestions} className=" px-10 py-2 w-fit h-fit bg-gradient-to-r from-sky-400 to-blue-600 text-white text-lg tracking-wide rounded-md">
+              Save Survey
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }

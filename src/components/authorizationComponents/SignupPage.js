@@ -6,10 +6,11 @@ export default function SignupPage() {
     const [fullname,setFullname] = useState("");
     const [email,setEmail] = useState("");
     const [password,setPassword] = useState("");
-    const [passwordAgain,setPasswordAgain] = useState("");    
+    const [passwordAgain,setPasswordAgain] = useState(""); 
+    
+    const navigate = useNavigate();
 
     const postData = async () => {
-        console.log("here");
         await axios({
             method: 'post',
             url: 'https://votio.onrender.com/v1/api/auth/register',
@@ -21,19 +22,18 @@ export default function SignupPage() {
             headers: {
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Origin': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
-                'Access-Control-Allow-Origin': 'Origin, Content-Type, X-Auth-Token',                
             },
         })
             .then(response => {
-                console.log(response);
+                alert(response.data.message);
+                navigate('../login');
             })
             .catch(error => {
-                console.log(error);
+                alert(error);
             });
     }
 
-    const navigate = useNavigate();
+    
 
     return (
         <div className="signup-page max-h-full min-h-screen">

@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import {useLocation} from 'react-router-dom';
 import LoadingScreen from '../../utilities/LoadingScreen';
 import axios from 'axios';
 import './Survey.css';
 
-const SurveyQuestion = ({ electionID, questions }) => {   
+const SurveyQuestion = ({ electionID, questions, setElectionDone }) => {   
     const [loading, setLoading] = useState(false);
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [selectedChoices, setSelectedChoices] = useState({});     
@@ -31,7 +31,6 @@ const SurveyQuestion = ({ electionID, questions }) => {
           });
     
           updatedChoicesResponse.filter((response) => response !== null);
-          console.log(updatedChoicesResponse);
           setLoading(true);
           await axios({
             method: 'post',
@@ -41,13 +40,12 @@ const SurveyQuestion = ({ electionID, questions }) => {
             },            
           })
             .then(response => {
-                setLoading(false);
-                console.log(response.data.metadata.accessToken);
+              setElectionDone(true);
             })
-            .catch(error => {
-                setLoading(false);
+            .catch(error => {                
                 alert(error);
             });
+          setLoading(false);          
         }
       };
   
@@ -122,6 +120,8 @@ const SurveyQuestion = ({ electionID, questions }) => {
 const Survey = () => {
   const [loading, setLoading] = useState(true);
   const [electionData,setElectionData] = useState(null);
+  const [errorMessage, setErrorMessage] = useState("Sorry but the code you entered doesn't exist");
+  const [electionDone,setElectionDone] = useState(false);
   const location = useLocation();
 
   useEffect(() => { 
@@ -129,16 +129,15 @@ const Survey = () => {
     const code = searchParams.get('code');
 
     async function fetchData() {
-      await axios.get(`https://votio.onrender.com/v1/api/elections/code/${code}`, {        
-      })
+      await axios.get(`https://votio.onrender.com/v1/api/elections/code/${code}`)
         .then(response => {
-          setElectionData(response.data.metadata);
-          setLoading(false);
+          setElectionData(response.data.metadata);          
         })
         .catch(error => {
-          alert(error);
+          setErrorMessage(`Error: ${error.response.data.message.message}`);
         });
-    }
+        setLoading(false);
+      }
     fetchData();
   }, []); 
 
@@ -148,19 +147,27 @@ const Survey = () => {
         <LoadingScreen />
       ) : (
         <div>
-          {electionData === null ? (
+          { (electionData === null) ? (
             <div className="flex flex-col max-w-screen-xl w-[75%] mx-auto pt-12 pb-12 px-16 bg-white rounded-lg">
-              <div>Oops sorry man this code ain't bussin</div>
+              <div>{errorMessage}</div>
             </div>
           ) : (
-            <div className="flex flex-col items-center">
-              <div className="survey-title max-w-[70%] rounded-t-lg font-extrabold text-2xl p-2">{electionData.title}</div>
-              <div className="flex flex-col max-w-screen-xl w-[75%] mx-auto pt-12 pb-12 px-16 bg-white rounded-b-lg">
-                <SurveyQuestion
-                  electionID={electionData.electionID}
-                  questions={electionData.questions}
-                />
-              </div>
+            <div>
+              {electionDone ? (
+                <div className="flex flex-col max-w-screen-xl w-[75%] mx-auto pt-12 pb-12 px-16 bg-white rounded-b-lg">THE END! THANK YOU FOR PARTICIPATING</div>
+              ):(
+                <div className="flex flex-col items-center"> 
+                  <div className="survey-title max-w-[70%] rounded-t-lg font-extrabold text-2xl p-2">{electionData.title}</div>
+                  <div className="flex flex-col max-w-screen-xl w-[75%] mx-auto pt-12 pb-12 px-16 bg-white rounded-b-lg">
+                    <SurveyQuestion
+                    electionID={electionData.electionID}
+                    questions={electionData.questions}
+                    setElectionDone={setElectionDone}
+                    />
+                  </div>
+                </div>
+              )}
+              
             </div>
           )}
         </div>
