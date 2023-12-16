@@ -8,6 +8,7 @@ const SurveyQuestion = ({ electionID, questions, setElectionDone }) => {
     const [loading, setLoading] = useState(false);
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [selectedChoices, setSelectedChoices] = useState({});     
+    const apiUrl = process.env.REACT_APP_API_URL;
        
     const handleNext = async () => {
       if (currentQuestionIndex < questions.length - 1) {
@@ -34,7 +35,7 @@ const SurveyQuestion = ({ electionID, questions, setElectionDone }) => {
           setLoading(true);
           await axios({
             method: 'post',
-            url: `https://votio.onrender.com/v1/api/elections/${electionID}/vote`,
+            url: `${apiUrl}/v1/api/elections/${electionID}/vote`,
             data: {                
                 answers: updatedChoicesResponse,
             },            
@@ -118,6 +119,7 @@ const SurveyQuestion = ({ electionID, questions, setElectionDone }) => {
 };
 
 const Survey = () => {
+  const apiUrl = process.env.REACT_APP_API_URL;
   const [loading, setLoading] = useState(true);
   const [electionData,setElectionData] = useState(null);
   const [errorMessage, setErrorMessage] = useState("Sorry but the code you entered doesn't exist");
@@ -129,7 +131,7 @@ const Survey = () => {
     const code = searchParams.get('code');
 
     async function fetchData() {
-      await axios.get(`https://votio.onrender.com/v1/api/elections/code/${code}`)
+      await axios.get(`${apiUrl}/v1/api/elections/code/${code}`)
         .then(response => {
           setElectionData(response.data.metadata);          
         })

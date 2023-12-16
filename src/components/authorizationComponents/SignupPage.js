@@ -1,19 +1,23 @@
 import React,{useState} from 'react'
 import { useNavigate  } from 'react-router-dom';
+import LoadingScreen from '../../utilities/LoadingScreen';
 import axios from 'axios';
 import './SignupPage.css';
 export default function SignupPage() {
+    const apiUrl = process.env.REACT_APP_API_URL;
     const [fullname,setFullname] = useState("");
     const [email,setEmail] = useState("");
     const [password,setPassword] = useState("");
     const [passwordAgain,setPasswordAgain] = useState(""); 
+    const [loading, setLoading] = useState(false);
     
     const navigate = useNavigate();
 
     const postData = async () => {
+        setLoading(true);
         await axios({
             method: 'post',
-            url: 'https://votio.onrender.com/v1/api/auth/register',
+            url: `${apiUrl}/v1/api/auth/register`,
             data: {
                 fullname: fullname,
                 email: email,
@@ -31,12 +35,16 @@ export default function SignupPage() {
             .catch(error => {
                 alert(error);
             });
+        setLoading(false);
     }
 
     
 
     return (
         <div className="signup-page max-h-full min-h-screen">
+             {loading && (    
+                <LoadingScreen/>
+            )}
             <div className="flex flex-col items-center justify-center min-h-screen px-6 py-8 mx-auto ">
                 <div className="flex items-center mb-6 text-2xl font-semibold text-white">
                     <img className="w-8 h-8 mr-2" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Logo_vote.svg/1200px-Logo_vote.svg.png" alt="logo"/>
@@ -105,7 +113,7 @@ export default function SignupPage() {
                                     </div>
                                     <div className="ml-3 text-sm">
                                         <label htmlFor="terms" >I accept the 
-                                            <button onClick={()=>{navigate('terms')}} className="mx-1 text-sm font-medium underline hover:text-indigo-800">Terms and Agreement</button>
+                                            <button onClick={()=>{navigate('/terms')}} className="mx-1 text-sm font-medium underline hover:text-indigo-800">Terms and Agreement</button>
                                         </label>
                                     </div>
                                 </div>

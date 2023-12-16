@@ -6,6 +6,7 @@ import LoadingScreen from '../../utilities/LoadingScreen';
 import './SurveyResult.css';
 
 const SurveyResult = ({getCookie}) => {
+  const apiUrl = process.env.REACT_APP_API_URL;
   const accessToken = getCookie("token");
   const [electionVoteData,setElectionVoteData] =useState(null);   
   const [loading, setLoading] = useState(true);
@@ -14,7 +15,7 @@ const SurveyResult = ({getCookie}) => {
   const errorMessage = "Oops, something went wrong and we can't get the election result";
   useEffect(() =>{     
     async function fetchData(){            
-        await axios.get(`https://votio.onrender.com/v1/api/elections/${id}/vote`,{                   
+        await axios.get(`${apiUrl}/v1/api/elections/${id}/vote`,{                   
         headers: {
             Authorization: `Bearer ${accessToken}`,                          
         },
@@ -39,9 +40,9 @@ const SurveyResult = ({getCookie}) => {
           {(electionVoteData === null) ? (            
               <div>{errorMessage}</div>
           ) : (
-              <div>
-                <div className=" w-fit p-2 text-lg font-bold bg-black text-white border border-2 border-black">
-                  Kết quả bỏ phiếu:
+              <div className="flex flex-col">
+                <div className="self-center w-fit p-2 text-2xl font-bold bg-black text-white border border-2 border-black">
+                  KẾT QUẢ BỎ PHIẾU
                 </div>
                 <div>
                   {electionVoteData.map((question, questionIndex) => (

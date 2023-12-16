@@ -14,6 +14,7 @@ import Survey from './components/surveyComponents/Survey';
 
 function App() {  
   const [isLoggedIn, setLoggedIn] = useState(false);  
+  const [role, setRole] = useState("GUEST");  
 
   useEffect(() => {
     const token = getCookie('token');
@@ -53,11 +54,11 @@ function App() {
   return (
     <Router>           
       <div className="content">        
-        <Navbar isLoggedIn={isLoggedIn} onLogout={handleLogout} />
+        <Navbar isLoggedIn={isLoggedIn} onLogout={handleLogout} role={role} setRole = {setRole}/>
         <Routes>
           <Route exact path="/" element={<MainPage />} />
           <Route path="/survey" element={<Survey />} />
-          <Route path="/login" element={<LoginPage isLoggedIn={isLoggedIn} onLogin={handleLogin} />} />
+          <Route path="/login" element={<LoginPage isLoggedIn={isLoggedIn} onLogin={handleLogin} setRole = {setRole}/>} />
           <Route path="/signup" element={<SignupPage />} />
           {isLoggedIn && (
             <>

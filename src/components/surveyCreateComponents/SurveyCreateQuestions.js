@@ -4,6 +4,7 @@ import Modal from './QuestionTypeModal';
 import LoadingScreen from '../../utilities/LoadingScreen';
 
 export default function SurveyCreateQuestions({getCookie}) {
+  const apiUrl = process.env.REACT_APP_API_URL;
   const accessToken = getCookie("token");
 
   const [loading, setLoading] = useState(false);
@@ -111,7 +112,7 @@ export default function SurveyCreateQuestions({getCookie}) {
     if(isSurveyValid()){
       await axios({
         method: 'post',
-        url: 'https://votio.onrender.com/v1/api/elections',
+        url: `${apiUrl}/v1/api/elections`,
         data: {                
           title: title,
           sharelink: "https://votio.com",

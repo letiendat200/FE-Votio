@@ -3,16 +3,17 @@ import { useNavigate, Navigate } from 'react-router-dom';
 import LoadingScreen from '../../utilities/LoadingScreen';
 import './LoginPage.css';
 import axios from 'axios';
-export default function LoginPage({ isLoggedIn, onLogin }) {
+export default function LoginPage({ isLoggedIn, onLogin, setRole }) {
     const navigate = useNavigate();
     const [email,setEmail] = useState("");
     const [password,setPassword] = useState("");
     const [loading, setLoading] = useState(false);
+    const apiUrl = process.env.REACT_APP_API_URL;
     const handleLogin = async () => {
         setLoading(true);
         await axios({
             method: 'post',
-            url: 'https://votio.onrender.com/v1/api/auth/login',
+            url: `${apiUrl}/v1/api/auth/login`,
             data: {                
                 email: email,
                 password: password,
@@ -23,13 +24,13 @@ export default function LoginPage({ isLoggedIn, onLogin }) {
             },
         })
             .then(response => {
-                setLoading(false);
+                setRole("USER");                
                 onLogin(response.data.metadata.accessToken);
             })
-            .catch(error => {
-                setLoading(false);
+            .catch(error => {                
                 alert(error);
             });
+        setLoading(false);
     };
     if (isLoggedIn) {
         return <Navigate to="/" />;
@@ -85,11 +86,11 @@ export default function LoginPage({ isLoggedIn, onLogin }) {
                                 <button onClick={() => { navigate('../forgotPassword') }} className="text-sm font-medium text-blue-600 hover:underline dark:text-blue-500">Forgot password?</button>
                             </div>
                             <button                                 
-                                className="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-white-300 font-base rounded-lg px-5 py-2.5 text-center"
+                                className="w-full font-base text-center text-white cursor-pointer bg-blue-600 hover:bg-blue-700 disabled:bg-slate-500 disabled:opacity-25 disabled:cursor-default rounded-lg px-5 py-2.5"
                                 disabled={!email || !password}
                                 onClick={handleLogin} 
                             >
-                                    Log in
+                                    Login
                             </button>
                             <div className="flex items-center">
                                 <span className="line bg-gray-400 h-0.5 flex-grow"></span>

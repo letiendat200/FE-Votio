@@ -1,0 +1,10 @@
+.navbar-name{
+    left: 16px;
+    margin: 16px;
+    padding: 4px;
+    background-color: #69c6dd;
+    color: white;
+    font-weight: 800;
+    border-radius: 8px;
+    border-width: 2px;
+}
